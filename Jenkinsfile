@@ -8,6 +8,7 @@ pipeline {
  
         stage('Checkout') {
             steps {
+                echo '===== Checking Out Code from GitHub ====='
                 checkout scm
             }
         }
@@ -15,7 +16,7 @@ pipeline {
         stage('Verify Files') {
             steps {
                 sh '''
-                    echo "===== Files from Github ====="
+                    echo "===== Files from GitHub ====="
                     pwd
                     ls -la
                 '''
@@ -29,6 +30,7 @@ pipeline {
  
                     docker build -t devops-quest:${BUILD_NUMBER} .
  
+                    echo "===== Docker Image Built ====="
                     docker images | grep devops-quest
                 '''
             }
@@ -36,6 +38,7 @@ pipeline {
  
         stage('Push Docker Image to Docker Hub') {
             steps {
+ 
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerhub-credentials',
                     usernameVariable: 'DOCKER_USER',
@@ -46,18 +49,21 @@ pipeline {
                         echo "===== Login to Docker Hub ====="
  
                         echo "$DOCKER_TOKEN" | docker login \
-                        -u "$DOCKER_USER" \
-                        --password-stdin
+                            -u "$DOCKER_USER" \
+                            --password-stdin
  
-                        echo "===== Tagging Image ====="
+                        echo "===== Tagging Docker Image ====="
  
-                        docker tag devops-quest:${BUILD_NUMBER} \
-                        $DOCKER_USER/devops-quest:${BUILD_NUMBER}
+                        docker tag \
+                            devops-quest:${BUILD_NUMBER} \
+                            $DOCKER_USER/devops-quest:${BUILD_NUMBER}
  
-                        echo "===== Pushing Image ====="
+                        echo "===== Pushing Docker Image ====="
  
                         docker push \
-                        $DOCKER_USER/devops-quest:${BUILD_NUMBER}
+                            $DOCKER_USER/devops-quest:${BUILD_NUMBER}
+ 
+                        echo "===== Docker Push Completed ====="
                     '''
                 }
             }
@@ -65,50 +71,50 @@ pipeline {
  
         stage('Deploy Application') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-credentials',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_TOKEN'
-                )]) {
+                sh '''
+                    echo "===== Deploying Build ${BUILD_NUMBER} ====="
  
-                    sh '''
-                        echo "===== Deploying Application ====="
+                    echo "Stopping old container..."
+                    docker stop devops-quest || true
  
-                        echo "Stopping existing container if present..."
-                        docker stop devops-quest-app || true
+                    echo "Removing old container..."
+                    docker rm devops-quest || true
  
-                        echo "Removing existing container if present..."
-                        docker rm devops-quest-app || true
+                    echo "Starting new container..."
  
-                        echo "Pulling new image..."
-                        docker pull $DOCKER_USER/devops-quest:${BUILD_NUMBER}
- 
-                        echo "Starting new container..."
-                        docker run -d \
-                        --name devops-quest-app \
+                    docker run -d \
+                        --name devops-quest \
                         -p 80:80 \
-                        $DOCKER_USER/devops-quest:${BUILD_NUMBER}
+                        vickyamav/devops-quest:${BUILD_NUMBER}
  
-                        echo "===== Running Container ====="
-                        docker ps
-                    '''
-                }
+                    echo "===== Deployment Completed ====="
+ 
+                    echo "===== Running Containers ====="
+                    docker ps
+                '''
             }
         }
+ 
     }
  
     post {
  
         success {
-            echo 'Build, Push and Deployment completed successfully!'
+            echo '=========================================='
+            echo 'Pipeline execution completed successfully!'
+            echo 'Docker image built and pushed to Docker Hub!'
+            echo 'Latest application deployed successfully!'
+            echo '=========================================='
         }
  
         failure {
+            echo '=========================================='
             echo 'Pipeline failed. Check the stage logs.'
+            echo '=========================================='
         }
  
         always {
-            echo 'Pipeline execution completed.'
+            sh 'docker logout || true'
         }
     }
 }
