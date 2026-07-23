@@ -15,7 +15,7 @@ pipeline {
         stage('Verify Files') {
             steps {
                 sh '''
-                    echo "===== Files from GitHub ====="
+                    echo "===== Files from Github ====="
                     pwd
                     ls -la
                 '''
