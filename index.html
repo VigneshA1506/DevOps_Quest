@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>From Code to Cloud: DevOps Quest</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e40af);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #1f2937;
+}
+
+.app {
+    width: 94%;
+    max-width: 760px;
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin: 25px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+}
+
+.screen {
+    display: none;
+}
+
+.screen.active {
+    display: block;
+}
+
+.center {
+    text-align: center;
+}
+
+h1 {
+    color: #1d4ed8;
+    margin-bottom: 5px;
+}
+
+h2 {
+    margin-top: 10px;
+}
+
+.subtitle {
+    color: #64748b;
+}
+
+button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 9px;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+.stop {
+    background: #dc2626;
+}
+
+.stop:hover {
+    background: #b91c1c;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+textarea {
+    min-height: 95px;
+    resize: vertical;
+}
+
+label {
+    display: block;
+    text-align: left;
+    margin: 16px 0 6px;
+    font-weight: bold;
+}
+
+.error {
+    color: #dc2626;
+    min-height: 20px;
+}
+
+.card {
+    background: #eff6ff;
+    padding: 22px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid #bfdbfe;
+    margin: 25px 0;
+}
+
+.card h3 {
+    font-size: 23px;
+    margin-bottom: 8px;
+}
+
+
+/* ================================
+   GAME
+================================ */
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    background: #eff6ff;
+    padding: 12px;
+    border-radius: 10px;
+}
+
+.rules {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 12px 0;
+}
+
+.rule {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 7px 10px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+#difficulty {
+    margin: 10px 0;
+    font-weight: bold;
+    color: #2563eb;
+}
+
+#gameArea {
+    height: 390px;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(circle at center, #1e3a8a, #020617);
+    border-radius: 14px;
+    margin-top: 12px;
+    cursor: crosshair;
+    user-select: none;
+    border: 2px solid #334155;
+}
+
+.target {
+    position: absolute;
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    animation: appear .15s ease-out;
+}
+
+.target:hover {
+    background: transparent;
+    transform: scale(1.1);
+}
+
+.normal-star {
+    font-size: 38px;
+}
+
+.golden-star {
+    font-size: 45px;
+}
+
+.bomb {
+    font-size: 42px;
+}
+
+.skull {
+    font-size: 40px;
+}
+
+@keyframes appear {
+    from {
+        transform: scale(.4);
+        opacity: .3;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+
+/* ================================
+   QUIZ
+================================ */
+
+.progress {
+    height: 10px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    margin: 15px 0 25px;
+}
+
+#progressBar {
+    height: 100%;
+    width: 20%;
+    background: #2563eb;
+    border-radius: 10px;
+    transition: width .3s;
+}
+
+.quiz-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.option {
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 14px;
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+.option:hover {
+    background: #eff6ff;
+    border-color: #60a5fa;
+}
+
+.option.selected {
+    background: #dbeafe;
+    border-color: #2563eb;
+}
+
+
+/* ================================
+   SCORE
+================================ */
+
+.total-score {
+    font-size: 54px;
+    font-weight: bold;
+    color: #2563eb;
+    margin: 15px;
+}
+
+.score-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 12px;
+    margin: 25px 0;
+}
+
+.score-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.score-box strong {
+    display: block;
+    font-size: 28px;
+    color: #2563eb;
+}
+
+
+/* ================================
+   FEEDBACK
+================================ */
+
+.feedback-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.stars button {
+    background: transparent;
+    color: #cbd5e1;
+    font-size: 40px;
+    padding: 2px;
+    margin: 0;
+}
+
+.stars button:hover,
+.stars button.active {
+    background: transparent;
+    color: #f59e0b;
+}
+
+.success-box {
+    background: #ecfdf5;
+    border: 1px solid #86efac;
+    border-radius: 12px;
+    padding: 18px;
+    margin: 20px 0;
+}
+
+.divider {
+    margin: 30px 0;
+    border: 0;
+    border-top: 1px solid #e2e8f0;
+}
+
+.unlock {
+    color: #16a34a;
+}
+
+
+/* ================================
+   MOBILE
+================================ */
+
+@media(max-width:600px) {
+
+    .score-grid,
+    .feedback-row {
+        grid-template-columns: 1fr;
+    }
+
+    .game-header {
+        font-size: 13px;
+    }
+
+    #gameArea {
+        height: 340px;
+    }
+
+    .app {
+        padding: 20px;
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="app">
+
+
+<!-- ==========================================
+     HOME
+========================================== -->
+
+<section id="welcome" class="screen active center">
+
+    <h1>🚀 From Code to Cloud</h1>
+
+    <h2>DevOps Quest</h2>
+
+    <p class="subtitle">
+        Play the challenge and see how high you can score!
+    </p>
+
+
+    <!-- ONLY ROUND 1 IS DISPLAYED -->
+
+    <div class="card">
+
+        <h2>🎮 Round 1</h2>
+
+        <h3>Catch the Stars</h3>
+
+        <p>
+            Test your speed, focus and reflexes!
+        </p>
+
+        <p>
+            ⏱ 60 Seconds
+        </p>
+
+        <strong>
+            🏆 Maximum: 50 Marks
+        </strong>
+
+    </div>
+
+
+    <label for="playerName">
+        Participant Name
+    </label>
+
+    <input
+        id="playerName"
+        type="text"
+        placeholder="Enter your name"
+        maxlength="50"
+    >
+
+    <p id="nameError" class="error"></p>
+
+
+    <button id="startBtn">
+        Start Round 1 🚀
+    </button>
+
+</section>
+
+
+
+<!-- ==========================================
+     ROUND 1 - GAME
+========================================== -->
+
+<section id="game" class="screen center">
+
+    <h2>🎮 Round 1 — Catch the Stars</h2>
+
+
+    <div class="game-header">
+
+        <span>
+            👤 <strong id="gameName"></strong>
+        </span>
+
+        <span>
+            🏆 Score:
+            <strong id="points">0</strong>/50
+        </span>
+
+        <span>
+            ⏱
+            <strong id="timer">60</strong>s
+        </span>
+
+    </div>
+
+
+    <div class="rules">
+
+        <span class="rule">
+            ⭐ +1
+        </span>
+
+        <span class="rule">
+            🌟 +3
+        </span>
+
+        <span class="rule">
+            💣 −3
+        </span>
+
+        <span class="rule">
+            💀 −5
+        </span>
+
+    </div>
+
+
+    <div id="difficulty">
+        🟢 Level: Easy
+    </div>
+
+
+    <div id="gameArea"></div>
+
+
+    <button id="stopBtn" class="stop">
+        Stop Game & Continue
+    </button>
+
+</section>
+
+
+
+<!-- ==========================================
+     ROUND 1 RESULT + ROUND 2 REVEAL
+========================================== -->
+
+<section id="gameScoreScreen" class="screen center">
+
+    <h1>🎮 Round 1 Completed!</h1>
+
+    <p>Your Game Score</p>
+
+
+    <div class="total-score">
+
+        <span id="gameMarks">0</span>/50
+
+    </div>
+
+
+    <h3 id="gameMessage"></h3>
+
+
+    <hr class="divider">
+
+
+    <h2 class="unlock">
+        🔓 Round 2 Unlocked!
+    </h2>
+
+
+    <div class="card">
+
+        <h2>
+            🧠 ISTQB Challenge
+        </h2>
+
+        <p>
+            Time to test your software testing knowledge!
+        </p>
+
+        <p>
+            📝 5 Multiple Choice Questions
+        </p>
+
+        <p>
+            ✅ Each Correct Answer = 10 Marks
+        </p>
+
+        <strong>
+            🏆 Maximum: 50 Marks
+        </strong>
+
+    </div>
+
+
+    <button id="quizStartBtn">
+        Start Round 2 🧠
+    </button>
+
+</section>
+
+
+
+<!-- ==========================================
+     ROUND 2 - ISTQB
+========================================== -->
+
+<section id="quiz" class="screen">
+
+
+    <h2 class="center">
+        🧠 Round 2 — ISTQB Challenge
+    </h2>
+
+
+    <div class="quiz-header">
+
+        <strong id="questionNumber"></strong>
+
+
+        <span>
+
+            Score:
+
+            <strong id="quizLiveScore">
+                0
+            </strong>/50
+
+        </span>
+
+    </div>
+
+
+    <div class="progress">
+
+        <div id="progressBar"></div>
+
+    </div>
+
+
+    <h3 id="question"></h3>
+
+
+    <div id="options"></div>
+
+
+    <p
+        id="quizError"
+        class="error">
+    </p>
+
+
+    <button id="nextBtn">
+        Next Question
+    </button>
+
+</section>
+
+
+
+<!-- ==========================================
+     FINAL SCORECARD
+========================================== -->
+
+<section id="result" class="screen center">
+
+
+    <h1>
+        🏆 Quest Completed!
+    </h1>
+
+
+    <h2 id="resultName"></h2>
+
+
+    <div class="score-grid">
+
+
+        <div class="score-box">
+
+            🎮
+
+            <p>
+                Round 1
+            </p>
+
+            <strong id="resultGame">
+                0/50
+            </strong>
+
+        </div>
+
+
+        <div class="score-box">
+
+            🧠
+
+            <p>
+                Round 2
+            </p>
+
+            <strong id="resultQuiz">
+                0/50
+            </strong>
+
+        </div>
+
+
+        <div class="score-box">
+
+            🏆
+
+            <p>
+                Total
+            </p>
+
+            <strong id="resultTotal">
+                0/100
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+    <p>
+        Your Final Score
+    </p>
+
+
+    <div class="total-score">
+
+        <span id="bigTotal">
+            0
+        </span>/100
+
+    </div>
+
+
+    <h3 id="performance"></h3>
+
+
+    <button id="feedbackBtn">
+
+        Continue to KT Feedback ⭐
+
+    </button>
+
+</section>
+
+
+
+<!-- ==========================================
+     KT FEEDBACK
+========================================== -->
+
+<section id="feedback" class="screen">
+
+
+    <h2 class="center">
+        ⭐ KT Feedback
+    </h2>
+
+
+    <p class="subtitle center">
+
+        Please share your feedback about the KT session.
+
+    </p>
+
+
+    <div class="feedback-row">
+
+
+        <div>
+
+            <label>
+                Name
+            </label>
+
+            <input
+                id="feedbackName"
+                readonly
+            >
+
+        </div>
+
+
+        <div>
+
+            <label>
+                Score
+            </label>
+
+            <input
+                id="feedbackScore"
+                readonly
+            >
+
+        </div>
+
+
+    </div>
+
+
+    <label>
+        KT Rating
+    </label>
+
+
+    <div
+        class="stars"
+        id="stars">
+
+
+        <button
+            type="button"
+            data-value="1">
+            ★
+        </button>
+
+
+        <button
+            type="button"
+            data-value="2">
+            ★
+        </button>
+
+
+        <button
+            type="button"
+            data-value="3">
+            ★
+        </button>
+
+
+        <button
+            type="button"
+            data-value="4">
+            ★
+        </button>
+
+
+        <button
+            type="button"
+            data-value="5">
+            ★
+        </button>
+
+
+    </div>
+
+
+    <p id="ratingText">
+
+        Select 1–5 stars
+
+    </p>
+
+
+    <label for="comments">
+
+        KT Comments
+
+    </label>
+
+
+    <textarea
+        id="comments"
+        placeholder="How was the KT session?">
+    </textarea>
+
+
+    <label for="suggestions">
+
+        Suggestions
+
+    </label>
+
+
+    <textarea
+        id="suggestions"
+        placeholder="Any suggestions for improvement?">
+    </textarea>
+
+
+    <p
+        id="feedbackError"
+        class="error">
+    </p>
+
+
+    <button id="submitBtn">
+
+        Submit Feedback 📩
+
+    </button>
+
+</section>
+
+
+
+<!-- ==========================================
+     THANK YOU
+========================================== -->
+
+<section id="thanks" class="screen center">
+
+
+    <h1>
+        ✅ Thank You!
+    </h1>
+
+
+    <h2 id="thanksName"></h2>
+
+
+    <p>
+        Your feedback has been submitted.
+    </p>
+
+
+    <div class="success-box">
+
+
+        <p>
+
+            🏆 Final Score:
+
+            <strong id="thanksScore"></strong>
+
+        </p>
+
+
+        <p>
+
+            ⭐ KT Rating:
+
+            <strong id="thanksRating"></strong>
+
+        </p>
+
+
+    </div>
+
+
+    <p>
+
+        Thank you for participating in
+
+        <strong>
+            From Code to Cloud: DevOps Quest
+        </strong>
+
+    </p>
+
+
+</section>
+
+
+</div>
+
+
+
+<script>
+
+/* ==========================================
+   GLOBAL VARIABLES
+========================================== */
+
+let playerName = "";
+
+let gameMarks = 0;
+
+let quizMarks = 0;
+
+let rating = 0;
+
+
+
+function show(id) {
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+
+            screen.classList.remove("active");
+
+        });
+
+
+    document
+        .getElementById(id)
+        .classList
+        .add("active");
+
+}
+
+
+
+/* ==========================================
+   START ROUND 1
+========================================== */
+
+document
+.getElementById("startBtn")
+.addEventListener("click", () => {
+
+
+    playerName =
+        document
+        .getElementById("playerName")
+        .value
+        .trim();
+
+
+    if (!playerName) {
+
+
+        document
+            .getElementById("nameError")
+            .textContent =
+            "Please enter your name.";
+
+
+        return;
+
+    }
+
+
+    document
+        .getElementById("nameError")
+        .textContent =
+        "";
+
+
+    document
+        .getElementById("gameName")
+        .textContent =
+        playerName;
+
+
+    show("game");
+
+
+    startGame();
+
+});
+
+
+
+/* ==========================================
+   ROUND 1 - CATCH THE STARS
+========================================== */
+
+const gameArea =
+    document.getElementById("gameArea");
+
+
+let points = 0;
+
+let seconds = 60;
+
+let gameRunning = false;
+
+let spawnTimer = null;
+
+let countdown = null;
+
+
+
+function startGame() {
+
+
+    points = 0;
+
+    seconds = 60;
+
+    gameRunning = true;
+
+
+    gameArea.innerHTML = "";
+
+
+    document
+        .getElementById("points")
+        .textContent =
+        0;
+
+
+    document
+        .getElementById("timer")
+        .textContent =
+        60;
+
+
+    updateDifficulty();
+
+
+    scheduleNextTarget();
+
+
+    countdown =
+        setInterval(() => {
+
+
+            seconds--;
+
+
+            document
+                .getElementById("timer")
+                .textContent =
+                seconds;
+
+
+            updateDifficulty();
+
+
+            if (seconds <= 0) {
+
+                finishGame();
+
+            }
+
+
+        }, 1000);
+
+}
+
+
+
+/* ==========================================
+   DIFFICULTY LEVEL
+========================================== */
+
+function getDifficulty() {
+
+
+    /* EASY */
+
+    if (seconds > 40) {
+
+
+        return {
+
+            spawnMin: 550,
+
+            spawnMax: 850,
+
+            life: 1100,
+
+            badChance: .20,
+
+            skullChance: .04
+
+        };
+
+    }
+
+
+    /* MEDIUM */
+
+    if (seconds > 20) {
+
+
+        return {
+
+            spawnMin: 380,
+
+            spawnMax: 650,
+
+            life: 850,
+
+            badChance: .30,
+
+            skullChance: .08
+
+        };
+
+    }
+
+
+    /* HARD */
+
+    return {
+
+        spawnMin: 250,
+
+        spawnMax: 450,
+
+        life: 650,
+
+        badChance: .40,
+
+        skullChance: .13
+
+    };
+
+}
+
+
+
+function updateDifficulty() {
+
+
+    const difficulty =
+        document.getElementById(
+            "difficulty"
+        );
+
+
+    if (seconds > 40) {
+
+
+        difficulty.textContent =
+            "🟢 Level: Easy";
+
+
+    }
+
+    else if (seconds > 20) {
+
+
+        difficulty.textContent =
+            "🟠 Level: Medium";
+
+
+    }
+
+    else {
+
+
+        difficulty.textContent =
+            "🔴 Level: Hard";
+
+    }
+
+}
+
+
+
+/* ==========================================
+   TARGET SPAWNING
+========================================== */
+
+function scheduleNextTarget() {
+
+
+    if (!gameRunning) {
+
+        return;
+
+    }
+
+
+    const difficulty =
+        getDifficulty();
+
+
+    const delay =
+
+        difficulty.spawnMin +
+
+        Math.random() *
+
+        (
+            difficulty.spawnMax -
+            difficulty.spawnMin
+        );
+
+
+    spawnTimer =
+        setTimeout(() => {
+
+
+            createTarget();
+
+
+            scheduleNextTarget();
+
+
+        }, delay);
+
+}
+
+
+
+/* ==========================================
+   CREATE TARGET
+========================================== */
+
+function createTarget() {
+
+
+    if (!gameRunning) {
+
+        return;
+
+    }
+
+
+    const difficulty =
+        getDifficulty();
+
+
+    const random =
+        Math.random();
+
+
+    let icon;
+
+    let value;
+
+    let className;
+
+
+
+    /*
+        💀 = -5
+        💣 = -3
+        🌟 = +3
+        ⭐ = +1
+    */
+
+
+    if (
+        random <
+        difficulty.skullChance
+    ) {
+
+
+        icon = "💀";
+
+        value = -5;
+
+        className =
+            "skull";
+
+
+    }
+
+    else if (
+        random <
+        difficulty.badChance
+    ) {
+
+
+        icon = "💣";
+
+        value = -3;
+
+        className =
+            "bomb";
+
+
+    }
+
+    else if (
+        Math.random() < .18
+    ) {
+
+
+        icon = "🌟";
+
+        value = 3;
+
+        className =
+            "golden-star";
+
+
+    }
+
+    else {
+
+
+        icon = "⭐";
+
+        value = 1;
+
+        className =
+            "normal-star";
+
+    }
+
+
+
+    const target =
+        document
+        .createElement(
+            "button"
+        );
+
+
+    target.type =
+        "button";
+
+
+    target.className =
+        `target ${className}`;
+
+
+    target.textContent =
+        icon;
+
+
+
+    /* RANDOM POSITION */
+
+
+    const maxX =
+        Math.max(
+            0,
+            gameArea.clientWidth - 60
+        );
+
+
+    const maxY =
+        Math.max(
+            0,
+            gameArea.clientHeight - 60
+        );
+
+
+    target.style.left =
+        Math.random() *
+        maxX +
+        "px";
+
+
+    target.style.top =
+        Math.random() *
+        maxY +
+        "px";
+
+
+
+    /* CLICK TARGET */
+
+
+    target
+    .addEventListener(
+        "click",
+        event => {
+
+
+            event.stopPropagation();
+
+
+            if (!gameRunning) {
+
+                return;
+
+            }
+
+
+            points =
+                Math.max(
+
+                    0,
+
+                    Math.min(
+
+                        50,
+
+                        points + value
+
+                    )
+
+                );
+
+
+            document
+                .getElementById(
+                    "points"
+                )
+                .textContent =
+                points;
+
+
+            target.remove();
+
+        }
+    );
+
+
+
+    gameArea
+        .appendChild(
+            target
+        );
+
+
+
+    /* TARGET DISAPPEARS */
+
+
+    setTimeout(() => {
+
+
+        if (
+            target.parentNode
+        ) {
+
+
+            target.remove();
+
+        }
+
+
+    }, difficulty.life);
+
+}
+
+
+
+/* ==========================================
+   STOP ROUND 1
+========================================== */
+
+document
+.getElementById("stopBtn")
+.addEventListener(
+    "click",
+    () => {
+
+
+        const stop =
+            confirm(
+                "Stop Round 1 and continue?"
+            );
+
+
+        if (stop) {
+
+
+            finishGame();
+
+        }
+
+
+    }
+);
+
+
+
+/* ==========================================
+   FINISH ROUND 1
+========================================== */
+
+function finishGame() {
+
+    if (!gameRunning) {
+        return;
+    }
+
+    gameRunning = false;
+
+    clearTimeout(spawnTimer);
+    clearInterval(countdown);
+
+    gameArea.innerHTML = "";
+
+    gameMarks = Math.max(0, Math.min(50, points));
+
+    document.getElementById("gameMarks").textContent = gameMarks;
+
+    let message;
+
+    if (gameMarks >= 40) {
+        message = "🔥 Amazing reflexes!";
+    }
+    else if (gameMarks >= 30) {
+        message = "👏 Great job!";
+    }
+    else if (gameMarks >= 20) {
+        message = "👍 Good attempt!";
+    }
+    else {
+        message = "🎯 Nice try! That was tricky.";
+    }
+
+    document.getElementById("gameMessage").textContent = message;
+
+    show("gameScoreScreen");
+}
+
+
+/* ==========================================
+   ISTQB QUESTIONS
+========================================== */
+
+const questions = [
+
+    {
+        question:
+        "Which testing principle states that it is impossible to test all combinations of inputs and preconditions?",
+
+        options: [
+            "Defect clustering",
+            "Exhaustive testing is impossible",
+            "Testing is context dependent",
+            "Absence-of-errors fallacy"
+        ],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "What is the main objective of software testing?",
+
+        options: [
+            "To prove the software contains no defects",
+            "To find defects and reduce the risk of failures",
+            "To replace debugging",
+            "To ensure developers write code faster"
+        ],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "Which of the following is a black-box test technique?",
+
+        options: [
+            "Statement testing",
+            "Branch testing",
+            "Equivalence partitioning",
+            "Code coverage"
+        ],
+
+        answer: 2
+    },
+
+    {
+        question:
+        "What is regression testing primarily used for?",
+
+        options: [
+            "Testing only newly developed functionality",
+            "Checking that changes have not adversely affected existing functionality",
+            "Testing only system performance",
+            "Testing without predefined test cases"
+        ],
+
+        answer: 1
+    },
+
+    {
+        question:
+        "Which test activity involves comparing actual results with expected results?",
+
+        options: [
+            "Test planning",
+            "Test analysis",
+            "Test execution",
+            "Test completion"
+        ],
+
+        answer: 2
+    }
+];
+
+
+let questionIndex = 0;
+let selectedAnswer = null;
+
+
+/* ==========================================
+   START ROUND 2
+========================================== */
+
+document.getElementById("quizStartBtn")
+.addEventListener("click", () => {
+
+    questionIndex = 0;
+    quizMarks = 0;
+
+    document.getElementById("quizLiveScore").textContent = 0;
+
+    show("quiz");
+
+    loadQuestion();
+});
+
+
+/* ==========================================
+   LOAD QUESTION
+========================================== */
+
+function loadQuestion() {
+
+    selectedAnswer = null;
+
+    const currentQuestion = questions[questionIndex];
+
+    document.getElementById("questionNumber").textContent =
+        `Question ${questionIndex + 1} of ${questions.length}`;
+
+    document.getElementById("question").textContent =
+        currentQuestion.question;
+
+    document.getElementById("progressBar").style.width =
+        `${((questionIndex + 1) / questions.length) * 100}%`;
+
+    document.getElementById("quizError").textContent = "";
+
+    const container = document.getElementById("options");
+
+    container.innerHTML = "";
+
+    currentQuestion.options.forEach((option, index) => {
+
+        const div = document.createElement("div");
+
+        div.className = "option";
+        div.textContent = option;
+
+        div.addEventListener("click", () => {
+
+            selectedAnswer = index;
+
+            document.querySelectorAll(".option")
+            .forEach(item => {
+                item.classList.remove("selected");
+            });
+
+            div.classList.add("selected");
+        });
+
+        container.appendChild(div);
+    });
+
+    document.getElementById("nextBtn").textContent =
+        questionIndex === questions.length - 1
+        ? "Finish Round 2"
+        : "Next Question";
+}
+
+
+/* ==========================================
+   NEXT QUESTION
+========================================== */
+
+document.getElementById("nextBtn")
+.addEventListener("click", () => {
+
+    if (selectedAnswer === null) {
+
+        document.getElementById("quizError").textContent =
+            "Please select an answer.";
+
+        return;
+    }
+
+    if (selectedAnswer === questions[questionIndex].answer) {
+
+        quizMarks += 10;
+
+        document.getElementById("quizLiveScore").textContent =
+            quizMarks;
+    }
+
+    questionIndex++;
+
+    if (questionIndex >= questions.length) {
+        showResults();
+    }
+    else {
+        loadQuestion();
+    }
+});
+
+
+/* ==========================================
+   FINAL RESULTS
+========================================== */
+
+function showResults() {
+
+    const total = gameMarks + quizMarks;
+
+    document.getElementById("resultName").textContent =
+        `Well done, ${playerName}!`;
+
+    document.getElementById("resultGame").textContent =
+        `${gameMarks}/50`;
+
+    document.getElementById("resultQuiz").textContent =
+        `${quizMarks}/50`;
+
+    document.getElementById("resultTotal").textContent =
+        `${total}/100`;
+
+    document.getElementById("bigTotal").textContent = total;
+
+    let message;
+
+    if (total >= 90) {
+        message = "🌟 Outstanding Performance!";
+    }
+    else if (total >= 75) {
+        message = "🎉 Excellent Performance!";
+    }
+    else if (total >= 60) {
+        message = "👍 Good Performance!";
+    }
+    else if (total >= 40) {
+        message = "👏 Good Attempt!";
+    }
+    else {
+        message = "💪 Keep learning and improving!";
+    }
+
+    document.getElementById("performance").textContent = message;
+
+    show("result");
+}
+
+
+/* ==========================================
+   OPEN KT FEEDBACK
+========================================== */
+
+document.getElementById("feedbackBtn")
+.addEventListener("click", () => {
+
+    const total = gameMarks + quizMarks;
+
+    document.getElementById("feedbackName").value =
+        playerName;
+
+    document.getElementById("feedbackScore").value =
+        `${total}/100`;
+
+    show("feedback");
+});
+
+
+/* ==========================================
+   KT STAR RATING
+========================================== */
+
+document.querySelectorAll("#stars button")
+.forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        rating = Number(button.dataset.value);
+
+        document.querySelectorAll("#stars button")
+        .forEach(star => {
+
+            star.classList.toggle(
+                "active",
+                Number(star.dataset.value) <= rating
+            );
+
+        });
+
+        document.getElementById("ratingText").textContent =
+            `${rating} out of 5 stars`;
+    });
+});
+
+
+/* ==========================================
+   SUBMIT KT FEEDBACK
+========================================== */
+
+document.getElementById("submitBtn")
+.addEventListener("click", () => {
+
+    if (rating === 0) {
+
+        document.getElementById("feedbackError").textContent =
+            "Please provide your KT rating.";
+
+        return;
+    }
+
+    document.getElementById("feedbackError").textContent = "";
+
+    const total = gameMarks + quizMarks;
+
+    const feedbackData = {
+
+        name: playerName,
+
+        gameScore: gameMarks,
+
+        istqbScore: quizMarks,
+
+        totalScore: total,
+
+        rating: rating,
+
+        comments:
+            document.getElementById("comments").value.trim(),
+
+        suggestions:
+            document.getElementById("suggestions").value.trim()
+    };
+
+    console.log("KT Feedback:", feedbackData);
+
+    document.getElementById("thanksName").textContent =
+        `Thank you, ${playerName}!`;
+
+    document.getElementById("thanksScore").textContent =
+        `${total}/100`;
+
+    document.getElementById("thanksRating").textContent =
+        `${rating}/5`;
+
+    show("thanks");
+});
+
+</script>
+
+</body>
+</html>
