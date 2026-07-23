@@ -29,47 +29,68 @@ pipeline {
  
                     docker build -t devops-quest:${BUILD_NUMBER} .
  
-                    echo "===== Docker Image Created ====="
                     docker images | grep devops-quest
                 '''
             }
         }
  
-        stage('Login to Docker Hub') {
+        stage('Push Docker Image to Docker Hub') {
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerhub-credentials',
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_TOKEN'
                 )]) {
+ 
                     sh '''
+                        echo "===== Login to Docker Hub ====="
+ 
                         echo "$DOCKER_TOKEN" | docker login \
                         -u "$DOCKER_USER" \
                         --password-stdin
+ 
+                        echo "===== Tagging Image ====="
+ 
+                        docker tag devops-quest:${BUILD_NUMBER} \
+                        $DOCKER_USER/devops-quest:${BUILD_NUMBER}
+ 
+                        echo "===== Pushing Image ====="
+ 
+                        docker push \
+                        $DOCKER_USER/devops-quest:${BUILD_NUMBER}
                     '''
                 }
             }
         }
  
-        stage('Tag and Push to Docker Hub') {
+        stage('Deploy Application') {
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerhub-credentials',
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_TOKEN'
                 )]) {
+ 
                     sh '''
-                        echo "===== Tagging Docker Image ====="
+                        echo "===== Deploying Application ====="
  
-                        docker tag devops-quest:${BUILD_NUMBER} \
-                        ${DOCKER_USER}/devops-quest:${BUILD_NUMBER}
+                        echo "Stopping existing container if present..."
+                        docker stop devops-quest-app || true
  
-                        echo "===== Pushing to Docker Hub ====="
+                        echo "Removing existing container if present..."
+                        docker rm devops-quest-app || true
  
-                        docker push \
-                        ${DOCKER_USER}/devops-quest:${BUILD_NUMBER}
+                        echo "Pulling new image..."
+                        docker pull $DOCKER_USER/devops-quest:${BUILD_NUMBER}
  
-                        echo "===== Docker Push Completed ====="
+                        echo "Starting new container..."
+                        docker run -d \
+                        --name devops-quest-app \
+                        -p 80:80 \
+                        $DOCKER_USER/devops-quest:${BUILD_NUMBER}
+ 
+                        echo "===== Running Container ====="
+                        docker ps
                     '''
                 }
             }
@@ -79,7 +100,7 @@ pipeline {
     post {
  
         success {
-            echo 'Docker image built and pushed to Docker Hub successfully!'
+            echo 'Build, Push and Deployment completed successfully!'
         }
  
         failure {
@@ -87,7 +108,7 @@ pipeline {
         }
  
         always {
-            echo "Pipeline execution completed."
+            echo 'Pipeline execution completed.'
         }
     }
 }
