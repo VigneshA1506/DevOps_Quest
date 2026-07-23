@@ -72,24 +72,25 @@ pipeline {
         stage('Deploy Application') {
             steps {
                 sh '''
-                    echo "===== Deploying Build ${BUILD_NUMBER} ====="
- 
-                    echo "Stopping old container..."
-                    docker stop devops-quest || true
- 
-                    echo "Removing old container..."
-                    docker rm devops-quest || true
- 
-                    echo "Starting new container..."
- 
+                    echo "===== Deploying Application ====="
+        
+                    echo "Stopping existing container if present..."
+                    docker stop devops-quest-app || true
+        
+                    echo "Removing existing container if present..."
+                    docker rm devops-quest-app || true
+        
+                    echo "Removing any failed devops-quest container..."
+                    docker rm -f devops-quest || true
+        
+                    echo "Starting Build ${BUILD_NUMBER}..."
+        
                     docker run -d \
-                        --name devops-quest \
+                        --name devops-quest-app \
                         -p 80:80 \
                         vickyamav/devops-quest:${BUILD_NUMBER}
- 
-                    echo "===== Deployment Completed ====="
- 
-                    echo "===== Running Containers ====="
+        
+                    echo "===== Running Container ====="
                     docker ps
                 '''
             }
