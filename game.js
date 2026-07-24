@@ -350,7 +350,7 @@ function submitFeedback() {
 
        In the next phase this will be replaced with: */
 
-       fetch("http://localhost:5000/feedback", {
+       fetch("http://35.154.48.17:5000/feedback", {
            method: "POST",
            headers: {
                "Content-Type": "application/json"
