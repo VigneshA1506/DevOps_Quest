@@ -5,7 +5,7 @@ import requests
 
 app = Flask(__name__)
 CORS(app)
-JENKINS_URL = "http://13.203.220.221:8080"
+JENKINS_URL = "http://43.204.98.40:8080"
 JENKINS_USER = os.getenv("JENKINS_USER")
 JENKINS_API_TOKEN = os.getenv("JENKINS_API_TOKEN")
 JENKINS_TRIGGER_TOKEN = os.getenv("JENKINS_TRIGGER_TOKEN")
