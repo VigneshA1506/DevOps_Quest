@@ -345,10 +345,10 @@ function submitFeedback() {
 
     console.log("Feedback:", feedback);
 
-    /*
-       IMPORTANT:
+    
+       /*IMPORTANT:
 
-       In the next phase this will be replaced with:
+       In the next phase this will be replaced with: */
 
        fetch("/feedback", {
            method: "POST",
@@ -358,7 +358,7 @@ function submitFeedback() {
            body: JSON.stringify(feedback)
        });
 
-       The backend will send this information
+      /* The backend will send this information
        to Jenkins.
     */
 

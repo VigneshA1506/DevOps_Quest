@@ -1855,16 +1855,47 @@ document.getElementById("submitBtn")
 
     console.log("KT Feedback:", feedbackData);
 
-    document.getElementById("thanksName").textContent =
-        `Thank you, ${playerName}!`;
+    // Send the feedback to the Flask backend.
+    // Flask is running locally on port 5000.
+    fetch("http://127.0.0.1:5000/feedback", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name: playerName,
+            score: total,
+            rating: rating,
+            comments: document.getElementById("comments").value.trim(),
+            suggestions: document.getElementById("suggestions").value.trim()
+        })
+    })
+    .then(async response => {
+        const data = await response.json();
 
-    document.getElementById("thanksScore").textContent =
-        `${total}/100`;
+        if (!response.ok) {
+            throw new Error(data.message || "Feedback submission failed.");
+        }
 
-    document.getElementById("thanksRating").textContent =
-        `${rating}/5`;
+        console.log("Server response:", data);
 
-    show("thanks");
+        document.getElementById("thanksName").textContent =
+            `Thank you, ${playerName}!`;
+
+        document.getElementById("thanksScore").textContent =
+            `${total}/100`;
+
+        document.getElementById("thanksRating").textContent =
+            `${rating}/5`;
+
+        show("thanks");
+    })
+    .catch(error => {
+        console.error("Feedback error:", error);
+
+        document.getElementById("feedbackError").textContent =
+            "Feedback could not be submitted. Please try again.";
+    });
 });
 
 </script>
