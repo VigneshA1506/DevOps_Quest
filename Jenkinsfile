@@ -72,7 +72,7 @@ pipeline {
  
                 withCredentials([
                     usernamePassword(
-                        credentialsId: 'dockerhub-credentials',
+                        credentialsId: 'dockerhub-creds',
                         usernameVariable: 'DOCKER_USER',
                         passwordVariable: 'DOCKER_TOKEN'
                     )
@@ -128,7 +128,7 @@ pipeline {
  
                 withCredentials([
                     usernamePassword(
-                        credentialsId: 'dockerhub-credentials',
+                        credentialsId: 'dockerhub-creds',
                         usernameVariable: 'DOCKER_USER',
                         passwordVariable: 'DOCKER_TOKEN'
                     )
@@ -185,7 +185,7 @@ pipeline {
                     ),
  
                     usernamePassword(
-                        credentialsId: 'dockerhub-credentials',
+                        credentialsId: 'dockerhub-creds',
                         usernameVariable: 'DOCKER_USER',
                         passwordVariable: 'DOCKER_TOKEN'
                     )
