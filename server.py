@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 import requests
+import sys
 
 app = Flask(__name__)
 CORS(app)
@@ -69,7 +70,7 @@ def feedback():
 
     except Exception as e:
         import traceback
-        traceback.print_exc()
+        traceback.print_exc(file=sys.stdout)
         print("Jenkins Error:", str(e))
     
         return jsonify({
