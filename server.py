@@ -68,8 +68,10 @@ def feedback():
         }), 500
 
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         print("Jenkins Error:", str(e))
-
+    
         return jsonify({
             "status": "error",
             "message": str(e)
