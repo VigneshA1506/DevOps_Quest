@@ -18,9 +18,7 @@ JOB_NAME = "DevOps-Quest-Feedback-Mail"
 def feedback():
 
     data = request.get_json()
-    print("Request JSON:", data)
-    print("Jenkins URL:", jenkins_url)
-    print("Parameters:", parameters)
+    
 
     name = data.get("name")
     score = data.get("score")
@@ -48,6 +46,9 @@ def feedback():
         "COMMENTS": comments,
         "SUGGESTIONS": suggestions
     }
+    print("Request JSON:", data)
+    print("Jenkins URL:", jenkins_url)
+    print("Parameters:", parameters)
 
     try:
         response = requests.post(
