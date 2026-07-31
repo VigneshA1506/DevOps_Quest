@@ -223,7 +223,7 @@ document
 
         const confirmStop =
             confirm(
-                "Do you want to stop the quest and continue to your score?"
+                "Do you want to stop the quest and continue to your Score?"
             );
 
         if (confirmStop) {
