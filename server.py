@@ -18,6 +18,9 @@ JOB_NAME = "DevOps-Quest-Feedback-Mail"
 def feedback():
 
     data = request.get_json()
+    print("Request JSON:", data)
+    print("Jenkins URL:", jenkins_url)
+    print("Parameters:", parameters)
 
     name = data.get("name")
     score = data.get("score")
@@ -55,6 +58,7 @@ def feedback():
         )
 
         print("Jenkins response:", response.status_code)
+        print("Jenkins response body:", response.text)
 
         if response.status_code in [200, 201, 202]:
             return jsonify({
