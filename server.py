@@ -75,8 +75,10 @@ def feedback():
 
     except Exception as e:
         import traceback
-        traceback.print_exc(file=sys.stdout)
-        print("Jenkins Error:", str(e))
+    
+        print("=" * 80)
+        traceback.print_exc()
+        print("=" * 80)
     
         return jsonify({
             "status": "error",
