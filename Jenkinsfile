@@ -150,6 +150,7 @@ pipeline {
                         echo "Starting Frontend Build ${BUILD_NUMBER}..."
  
                         docker run -d \
+                            --restart unless-stopped \
                             --name devops-quest-app \
                             -p 80:80 \
                             $DOCKER_USER/devops-quest:${BUILD_NUMBER}
@@ -205,6 +206,7 @@ pipeline {
                         echo "Starting Backend Build ${BUILD_NUMBER}..."
  
                         docker run -d \
+                            --restart unless-stopped \
                             --name devops-quest-backend \
                             -p 5000:5000 \
                             -e JENKINS_URL="http://13.203.124.160:8080" \
