@@ -54,7 +54,9 @@ def feedback():
         # Get Jenkins Crumb
         crumb_url = f"{JENKINS_URL}/crumbIssuer/api/json"
         
-        crumb_response = requests.get(
+        session = requests.Session()
+ 
+        crumb_response = session.get(
             crumb_url,
             auth=(JENKINS_USER, JENKINS_API_TOKEN)
         )
@@ -65,8 +67,10 @@ def feedback():
             crumb_data["crumbRequestField"]: crumb_data["crumb"]
         }
         
-        # Trigger Jenkins
-        response = requests.post(
+        print("CRUMB DATA:", crumb_data)
+        print("HEADERS:", headers)
+        
+        response = session.post(
             jenkins_url,
             params=parameters,
             auth=(JENKINS_USER, JENKINS_API_TOKEN),
