@@ -51,10 +51,26 @@ def feedback():
     print("Parameters:", parameters)
 
     try:
+        # Get Jenkins Crumb
+        crumb_url = f"{JENKINS_URL}/crumbIssuer/api/json"
+        
+        crumb_response = requests.get(
+            crumb_url,
+            auth=(JENKINS_USER, JENKINS_API_TOKEN)
+        )
+        
+        crumb_data = crumb_response.json()
+        
+        headers = {
+            crumb_data["crumbRequestField"]: crumb_data["crumb"]
+        }
+        
+        # Trigger Jenkins
         response = requests.post(
             jenkins_url,
             params=parameters,
             auth=(JENKINS_USER, JENKINS_API_TOKEN),
+            headers=headers,
             timeout=10
         )
 
