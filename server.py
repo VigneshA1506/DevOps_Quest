@@ -35,7 +35,7 @@ def feedback():
     print("========================")
 
     jenkins_url = (
-        f"{JENKINS_URL}/job/{JOB_NAME}/buildWithParameters"
+        f"{JENKINS_URL}/job/{JOB_NAME}/buildWithParameters?token={JENKINS_TRIGGER_TOKEN}"
     )
 
     parameters = {
