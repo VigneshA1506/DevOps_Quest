@@ -207,6 +207,7 @@ pipeline {
                         docker run -d \
                             --name devops-quest-backend \
                             -p 5000:5000 \
+                            -e JENKINS_URL="http://13.203.124.160:8080" \
                             -e JENKINS_USER="$JENKINS_USER" \
                             -e JENKINS_API_TOKEN="$JENKINS_API_TOKEN" \
                             -e JENKINS_TRIGGER_TOKEN="$JENKINS_TRIGGER_TOKEN" \

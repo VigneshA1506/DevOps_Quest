@@ -72,10 +72,11 @@ def feedback():
         
         response = session.post(
             jenkins_url,
-            params=parameters,
+            data=parameters,
             auth=(JENKINS_USER, JENKINS_API_TOKEN),
             headers=headers,
-            timeout=10
+            timeout=10,
+            allow_redirects=False
         )
 
         print("Jenkins response:", response.status_code)
